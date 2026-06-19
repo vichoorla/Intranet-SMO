@@ -2,7 +2,13 @@
 
 import {useContext, useState, createContext} from 'react'
 
-const AuthContext = createContext(null)
+type AuthContextType = {
+  user: any
+  login: (email: string, password: string) => boolean
+  logout: () => void
+}
+
+const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
@@ -12,7 +18,7 @@ const [user, setUser] = useState(() =>
 )
 
 const login = (email: string, password: string) => { // verifica email y pass como strings y si coinciden con lo establecido accede
-    if (email === 'Vicente@test.com' && password === '123456') {
+    if (email === 'admin@test.com' && password === '123456') {
       const userData = { email }
       localStorage.setItem('user', JSON.stringify(userData))
       setUser(userData)
@@ -32,3 +38,5 @@ return (
     </AuthContext.Provider>
 )
 }
+
+export const useAuth = () => useContext(AuthContext)
