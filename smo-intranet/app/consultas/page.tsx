@@ -21,6 +21,7 @@ export default function ConsultasPage() {
   const [form, setForm] = useState(initialForm)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [message, setMessage] = useState("")
+  const [messageType, setMessageType] = useState<"success" | "error" | null>(null)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
@@ -30,20 +31,59 @@ export default function ConsultasPage() {
   const resetForm = () => {
     setForm(initialForm)
     setEditingId(null)
+    setMessage("")
+    setMessageType(null)
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    // Validaciones cliente
+    const nombre = form.nombre?.trim() ?? ""
+    const apellido = form.apellido?.trim() ?? ""
+    const correo = form.correo?.trim() ?? ""
+    const telefonoRaw = form.telefono?.trim() ?? ""
+    const telefonoDigits = telefonoRaw.replace(/\D/g, "")
+
+    if (nombre.length < 3) {
+      setMessage("El nombre debe tener al menos 3 caracteres")
+      setMessageType("error")
+      setTimeout(() => { setMessage(""); setMessageType(null) }, 4000)
+      return
+    }
+
+    if (apellido.length < 3) {
+      setMessage("El apellido debe tener al menos 3 caracteres")
+      setMessageType("error")
+      setTimeout(() => { setMessage(""); setMessageType(null) }, 4000)
+      return
+    }
+
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRe.test(correo)) {
+      setMessage("Ingresa un correo electrónico válido")
+      setMessageType("error")
+      setTimeout(() => { setMessage(""); setMessageType(null) }, 4000)
+      return
+    }
+
+    if (telefonoDigits.length < 7) {
+      setMessage("El teléfono debe contener al menos 7 dígitos numéricos")
+      setMessageType("error")
+      setTimeout(() => { setMessage(""); setMessageType(null) }, 4000)
+      return
+    }
     if (editingId) {
       updateConsulta(editingId, form)
       setMessage("Consulta actualizada correctamente")
+      setMessageType("success")
     } else {
       createConsulta(form)
       setMessage("Consulta guardada correctamente")
+      setMessageType("success")
     }
 
     resetForm()
-    setTimeout(() => setMessage(""), 3000)
+    setTimeout(() => { setMessage(""); setMessageType(null) }, 3000)
   }
 
   return (
@@ -84,7 +124,11 @@ export default function ConsultasPage() {
               </button>
             )}
           </div>
-          {message && <div className={`${styles.message} ${styles.messageSuccess}`}>{message}</div>}
+          {message && (
+            <div className={`${styles.message} ${messageType === "error" ? styles.messageError : styles.messageSuccess}`}>
+              {message}
+            </div>
+          )}
         </form>
       </div>
 
