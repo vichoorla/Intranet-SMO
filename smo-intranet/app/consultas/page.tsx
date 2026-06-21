@@ -17,8 +17,9 @@ const initialForm = {
 
 export default function ConsultasPage() {
   const auth = useAuth()
-  const { consultas, createConsulta, deleteConsulta } = useCrud()
+  const { consultas, createConsulta, updateConsulta, deleteConsulta } = useCrud()
   const [form, setForm] = useState(initialForm)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [message, setMessage] = useState("")
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -26,26 +27,37 @@ export default function ConsultasPage() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  const resetForm = () => {
+    setForm(initialForm)
+    setEditingId(null)
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    createConsulta(form)
-    setForm(initialForm)
-    setMessage("Consulta guardada correctamente")
+    if (editingId) {
+      updateConsulta(editingId, form)
+      setMessage("Consulta actualizada correctamente")
+    } else {
+      createConsulta(form)
+      setMessage("Consulta guardada correctamente")
+    }
+
+    resetForm()
     setTimeout(() => setMessage(""), 3000)
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>📋 Gestión de Consultas</h1>
+        <h1>Gestor de Consultas</h1>
         <p className={styles.userInfo}>Usuario: <strong>{auth?.user?.email ?? "invitado"}</strong></p>
       </div>
 
       <div className={styles.formSection}>
-        <h2>➕ Nueva Consulta</h2>
+        <h2>Cotizacion</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
-            <input className={styles.input} name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre completo" required />
+            <input className={styles.input} name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre" required />
           </div>
           <div className={styles.formGroup}>
             <input className={styles.input} name="apellido" value={form.apellido} onChange={handleChange} placeholder="Apellido" required />
@@ -63,14 +75,21 @@ export default function ConsultasPage() {
             <input className={styles.input} name="fecha" type="date" value={form.fecha} onChange={handleChange} required />
           </div>
           <div className={styles.buttonContainer}>
-            <button type="submit" className={`${styles.button} ${styles.buttonPrimary}`}>Guardar Consulta</button>
+            <button type="submit" className={`${styles.button} ${styles.buttonPrimary}`}>
+              {editingId ? "Actualizar Consulta" : "Guardar Consulta"}
+            </button>
+            {editingId && (
+              <button type="button" className={`${styles.button} ${styles.buttonSecondary}`} onClick={resetForm}>
+                Cancelar
+              </button>
+            )}
           </div>
           {message && <div className={`${styles.message} ${styles.messageSuccess}`}>{message}</div>}
         </form>
       </div>
 
       <div className={styles.listSection}>
-        <h2>📌 Consultas Registradas</h2>
+        <h2>Consultas Registradas</h2>
         {consultas.length === 0 ? (
           <div className={styles.emptyState}>
             <p>No hay consultas registradas aún</p>
@@ -81,17 +100,30 @@ export default function ConsultasPage() {
               <li key={consulta.id} className={styles.consultaCard}>
                 <div className={styles.consultaName}>{consulta.nombre} {consulta.apellido}</div>
                 <div className={styles.consultaMeta}>
-                  <span><span className={styles.metaIcon}>✉️</span> {consulta.correo}</span>
-                  <span><span className={styles.metaIcon}>📞</span> {consulta.telefono}</span>
-                  <span><span className={styles.metaIcon}>📅</span> {consulta.fecha}</span>
+                  <span>Correo: {consulta.correo}</span>
+                  <span>Teléfono: {consulta.telefono}</span>
+                  <span>Fecha: {consulta.fecha}</span>
                 </div>
                 <div className={styles.consultaMensaje}>{consulta.mensaje}</div>
                 <div className={styles.consultaActions}>
-                  <Link href={`/consultas/${consulta.id}`} className={styles.linkButton}>
-                    ✏️ Editar
-                  </Link>
-                  <button type="button" onClick={() => deleteConsulta(consulta.id)} className={styles.linkButtonDanger}>
-                    🗑️ Eliminar
+                  <button type="button" className={styles.linkButton} onClick={() => {
+                    setEditingId(consulta.id)
+                    setForm({
+                      nombre: consulta.nombre,
+                      apellido: consulta.apellido,
+                      correo: consulta.correo,
+                      telefono: consulta.telefono,
+                      mensaje: consulta.mensaje,
+                      fecha: consulta.fecha,
+                    })
+                  }}>
+                    Editar
+                  </button>
+                  <button type="button" onClick={() => {
+                    deleteConsulta(consulta.id)
+                    if (editingId === consulta.id) resetForm()
+                  }} className={styles.linkButtonDanger}>
+                    Eliminar
                   </button>
                 </div>
               </li>
