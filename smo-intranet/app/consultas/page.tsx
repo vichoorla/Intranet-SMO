@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useAuth } from "@/app/context/AuthContext"
-import { useCrud } from "@/hooks/useCrud"
+import { useCrud } from "@/app/context/CrudContext"
 import styles from "./consultas.module.css"
 
 const initialForm = {
@@ -73,7 +73,11 @@ export default function ConsultasPage() {
       return
     }
     if (editingId) {
-      updateConsulta(editingId, form)
+      updateConsulta({
+        id: editingId,
+        estado: consultas.find(c => c.id === editingId)?.estado ?? "Pendiente",
+        ...form,
+      })
       setMessage("Consulta actualizada correctamente")
       setMessageType("success")
     } else {

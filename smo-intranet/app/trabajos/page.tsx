@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCrud } from "@/hooks/useCrud";
+import { useCrud } from "@/app/context/CrudContext";
 
 export default function TrabajosPage(){
 
@@ -10,6 +10,8 @@ export default function TrabajosPage(){
         deleteConsulta,
         cambiarEstado
     } = useCrud();
+
+console.log("consultas:", consultas);
 
     return(
 
