@@ -23,6 +23,7 @@ export default function TrabajosPage() {
         fecha: "",
         precio: 0,
     });
+    const [busqueda, setBusqueda] = useState("");
 
     const pendientes = consultas.filter(
         (c) => c.estado === "Pendiente"
@@ -32,12 +33,36 @@ export default function TrabajosPage() {
         (c) => c.estado === "Terminado"
     ).length;
 
+    const consultasFiltradas = consultas.filter((consulta) => {
+
+    const texto = (
+        consulta.nombre +
+        " " +
+        consulta.apellido +
+        " " +
+        consulta.correo
+    ).toLowerCase();
+
+    return texto.includes(busqueda.toLowerCase());
+
+});
+
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Trabajos realizados</h1>
-                <p>Administra las solicitudes de los clientes.</p>
+            <div>
+                <h1>Trabajos Realizados</h1>
+                <p>En esta sección puedes ver todos los trabajos realizados y pendientes.</p>
             </div>
+
+        <div className={styles.searchContainer}>
+            <input
+                className={styles.searchInput}
+                type="text"
+                placeholder="Buscar cliente..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+        />
+</div>
 
             <div className={styles.cards}>
                 <div className={styles.card}>
@@ -153,7 +178,7 @@ export default function TrabajosPage() {
 
                                 {editandoId === consulta.id && (
                                     <tr>
-                                        <td colSpan={6}>
+                                        <td colSpan={7}>
                                             <div className={styles.editor}>
 
                                                 <h2>Editar trabajo</h2>
