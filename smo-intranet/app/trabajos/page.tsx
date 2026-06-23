@@ -96,7 +96,7 @@ export default function TrabajosPage() {
                     </thead>
 
                     <tbody>
-                        {consultas.map((consulta) => (
+                        {consultasFiltradas.map((consulta) => (
                             <>
                                 <tr key={consulta.id}>
                                     <td>
