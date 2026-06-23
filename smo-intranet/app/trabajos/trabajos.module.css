@@ -3,8 +3,6 @@
     width: 100%;
 }
 
-
-
 .header {
     margin-bottom: 30px;
 }
@@ -27,7 +25,7 @@
 
 .card {
     flex: 1;
-    background: rgb(226, 223, 223);
+    background: white;
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0px 5px 15px rgba(0,0,0,.08);
@@ -36,6 +34,7 @@
 .card h3 {
     color: #64748b;
     font-size: 15px;
+    margin: 0;
 }
 
 .card span {
@@ -60,7 +59,7 @@
 
 .table th {
     background: #2563eb;
-    color: rgb(255, 255, 255);
+    color: white;
     padding: 18px;
     text-align: left;
 }
@@ -68,7 +67,7 @@
 .table td {
     padding: 18px;
     border-bottom: 1px solid #eee;
-    color:#1e293b
+    color: #374151;
 }
 
 .table tr:hover {
@@ -76,68 +75,162 @@
 }
 
 .badgePendiente {
-
     background: #FEF3C7;
     color: #92400E;
     padding: 8px 15px;
     border-radius: 30px;
     font-size: 13px;
     font-weight: bold;
-
 }
 
 .badgeTerminado {
-
     background: #DCFCE7;
     color: #166534;
     padding: 8px 15px;
     border-radius: 30px;
     font-size: 13px;
     font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .25s;
+    font-weight: 600;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+}
+
+.estado {
+    background: #22c55e;
+    color: white;
+}
+
+.editar {
+    background: #2563eb;
+    color: white;
+}
+
+.eliminar {
+    background: #ef4444;
+    color: white;
+}
+
+/* ========================= */
+/* FORMULARIO DESPLEGABLE */
+/* ========================= */
+
+.editor{
+
+    margin-top:15px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:25px;
+
+    animation: aparecer .25s ease;
 
 }
 
-.actions{
+@keyframes aparecer{
 
-    display:flex;
-    gap:10px;
+    from{
+
+        opacity:0;
+        transform:translateY(-10px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateY(0);
+
+    }
 
 }
 
-.button{
+.editor h2{
 
-    border:none;
-    padding:10px 14px;
+    margin-top:0;
+    margin-bottom:20px;
+    color:#1e293b;
+
+}
+
+.formGrid{
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+
+}
+
+.input{
+
+    width:100%;
+    padding:12px;
+
+    border:1px solid #CBD5E1;
+
     border-radius:8px;
-    cursor:pointer;
+
+    outline:none;
+
     transition:.2s;
 
-}
-
-.button:hover{
-
-    transform:translateY(-2px);
+    font-size:15px;
 
 }
 
-.estado{
+.input:focus{
 
-    background:#22c55e;
-    color:white;
+    border-color:#2563eb;
 
-}
-
-.editar{
-
-    background:#2563eb;
-    color:white;
-    text-decoration:none;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
 
 }
 
-.eliminar{
+.label{
 
-    background:#ef4444;
-    color:white;
+    display:block;
+
+    margin-top:25px;
+    margin-bottom:10px;
+
+    font-weight:600;
+
+    color:#475569;
+
+}
+
+.textarea{
+
+    width:100%;
+
+    min-height:120px;
+
+    resize:none;
+
+    border-radius:8px;
+
+    border:1px solid #CBD5E1;
+
+    background:#f1f5f9;
+
+    padding:15px;
+
+    color:#334155;
+
+    font-size:14px;
 
 }
