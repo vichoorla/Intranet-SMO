@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCrud } from "@/hooks/useCrud";
+import { useCrud } from "@/app/context/CrudContext";
 
 export default function EditarTrabajo(){
 
