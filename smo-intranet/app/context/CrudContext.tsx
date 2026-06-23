@@ -17,6 +17,7 @@ export type Consulta = {
     mensaje: string;
     fecha: string;
     estado: "Pendiente" | "Terminado";
+    precio: number;
 };
 
 type CrudContextType = {

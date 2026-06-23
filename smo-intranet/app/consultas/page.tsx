@@ -76,12 +76,13 @@ export default function ConsultasPage() {
       updateConsulta({
         id: editingId,
         estado: consultas.find(c => c.id === editingId)?.estado ?? "Pendiente",
+        precio: consultas.find(c => c.id === editingId)?.precio ?? 0,
         ...form,
       })
       setMessage("Consulta actualizada correctamente")
       setMessageType("success")
     } else {
-      createConsulta(form)
+      createConsulta({ ...form, precio: 0 })
       setMessage("Consulta guardada correctamente")
       setMessageType("success")
     }
