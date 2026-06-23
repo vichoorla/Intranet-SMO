@@ -10,6 +10,7 @@ export type Consulta = {
   telefono: string
   mensaje: string
   fecha: string
+  estado: "pendiente" | "terminado"
 }
 
 const STORAGE_KEY = "consultas-clientes"
@@ -29,12 +30,27 @@ export function useCrud() {
   }, [consultas])
 
   const createConsulta = (data: Omit<Consulta, "id">) => {
-    setConsultas((prev) => [{ id: Date.now().toString(), ...data }, ...prev])
+    setConsultas((prev) => [
+      { 
+      id: Date.now().toString(),
+      estado: "pendiente", ...data,
+    },
+     ...prev])
   }
 
   const updateConsulta = (id: string, data: Omit<Consulta, "id">) => {
     setConsultas((prev) =>
       prev.map((consulta) => (consulta.id === id ? { ...consulta, ...data } : consulta))
+    )
+  }
+
+ const cambiarEstado = (id: string) => {
+    setConsultas((prev) =>
+      prev.map((consulta) =>
+        consulta.id === id
+          ? { ...consulta, estado: consulta.estado === "pendiente" ? "terminado" : "pendiente" }
+          : consulta
+      )
     )
   }
 
@@ -52,5 +68,6 @@ export function useCrud() {
     updateConsulta,
     deleteConsulta,
     getConsultaById,
+    cambiarEstado,
   }
 }
