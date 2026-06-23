@@ -64,6 +64,7 @@ export default function TrabajosPage() {
                             <th>Correo</th>
                             <th>Teléfono</th>
                             <th>Fecha</th>
+                            <th>Precio</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -78,13 +79,13 @@ export default function TrabajosPage() {
                                             {consulta.nombre} {consulta.apellido}
                                         </strong>
                                     </td>
-
                                     <td>{consulta.correo}</td>
-
                                     <td>{consulta.telefono}</td>
-
                                     <td>{consulta.fecha}</td>
-
+                                    <td>${consulta.precio > 0
+                                        ? `${consulta.precio.toLocaleString("es-CL")}`
+                                        : '-'
+                                    }</td>
                                     <td>
                                         <span
                                             className={
