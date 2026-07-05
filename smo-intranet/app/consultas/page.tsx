@@ -6,6 +6,9 @@ import { useAuth } from "@/app/context/AuthContext"
 import { useCrud } from "@/app/context/CrudContext"
 import styles from "./consultas.module.css"
 
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 const initialForm = {
   nombre: "",
   apellido: "",
