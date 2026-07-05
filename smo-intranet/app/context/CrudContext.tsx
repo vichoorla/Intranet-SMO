@@ -1,12 +1,11 @@
 "use client";
 
+import { db } from "@/firebase/firebase";
+
 import {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    ReactNode,
-} from "react";
+    collection,
+    
+}
 
 export type Consulta = {
     id: string;

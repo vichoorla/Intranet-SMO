@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
@@ -20,7 +20,7 @@ export default function LoginPage() {
       return
     }
 
-    const ok = login(email, password)
+    const ok = await login(email, password)
     if (ok) {
       router.push('/consultas')
     } else {

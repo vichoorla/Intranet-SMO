@@ -1,42 +1,63 @@
 'use client'
 
-import {useContext, useState, createContext} from 'react'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react'
+
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth'
+
+import { auth } from '../../firebase/firebase'
 
 type AuthContextType = {
-  user: any
-  login: (email: string, password: string) => boolean
-  logout: () => void
+  user: User | null
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+    })
+    return () => unsubscribe()
+  }, [])
 
-// user es para el usuario que se loguea y setUser es para verificar si esta en el local storage.
-const [user, setUser] = useState(() =>
-  JSON.parse(localStorage.getItem('user') || 'null')
-)
-
-const login = (email: string, password: string) => { // verifica email y pass como strings y si coinciden con lo establecido accede
-    if (email === 'admin@test.com' && password === '123456') {
-      const userData = { email }
-      localStorage.setItem('user', JSON.stringify(userData))
-      setUser(userData)
+  const login = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
       return true
+    } catch {
+      return false
     }
-    return false
   }
 
-const logout = () => { // Elimina al user del localstorage y lo cambia a un null
-    localStorage.removeItem('user')
-    setUser(null)
-    }
+  const logout = async () => {
+    await signOut(auth)
+  }
 
-return (
+  return (
     <AuthContext.Provider value={{ user, login, logout }}>
-    {children}
+      {children}
     </AuthContext.Provider>
-)
+  )
 }
 
-export const useAuth = () => useContext(AuthContext)
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth debe usarse dentro de AuthProvider")
+  }
+  return context
+}
