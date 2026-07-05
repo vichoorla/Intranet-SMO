@@ -1,11 +1,27 @@
 "use client";
 
+
+
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    ReactNode,
+} from "react";
+
 import { db } from "@/firebase/firebase";
 
 import {
     collection,
-    
-}
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    onSnapshot,
+} from "firebase/firestore";
+
+
 
 export type Consulta = {
     id: string;
@@ -21,10 +37,10 @@ export type Consulta = {
 
 type CrudContextType = {
     consultas: Consulta[];
-    createConsulta: (consulta: Omit<Consulta, "id" | "estado">) => void;
-    updateConsulta: (consulta: Consulta) => void;
-    deleteConsulta: (id: string) => void;
-    cambiarEstado: (id: string) => void;
+    createConsulta: (consulta: Omit<Consulta, "id" | "estado">) => Promise<void>;
+    updateConsulta: (consulta: Consulta) => Promise<void>;
+    deleteConsulta: (id: string) => Promise<void>;
+    cambiarEstado: (id: string) => Promise<void>;
     getConsultaById: (id: string) => Consulta | undefined;
 };
 
@@ -33,49 +49,30 @@ const CrudContext = createContext<CrudContextType | null>(null);
 export function CrudProvider({ children }: { children: ReactNode }) {
 
     const [consultas, setConsultas] = useState<Consulta[]>([]);
-
-    // Cargar localStorage
     useEffect(() => {
-
-        const data = localStorage.getItem("consultas");
-
-        if (data) {
-
-            setConsultas(JSON.parse(data));
-
+    const unsubscribe = onSnapshot(
+        collection(db, "consultas"),
+        (snapshot) => {
+            const datos: Consulta[] = snapshot.docs.map((documento) => ({
+                id: documento.id,
+                ...(documento.data() as Omit<Consulta, "id">),
+            }));
+            setConsultas(datos);
         }
+    );
+    return () => unsubscribe();
+}, []);
 
-    }, []);
+    const createConsulta = async (
+    consulta: Omit<Consulta, "id" | "estado">
+) => {
+    await addDoc(collection(db, "consultas"), {
+        ...consulta,
+        estado: "Pendiente",
+    });
+};
 
-    // Guardar localStorage
-    useEffect(() => {
-
-        localStorage.setItem("consultas", JSON.stringify(consultas));
-
-    }, [consultas]);
-
-    const createConsulta = (
-        consulta: Omit<Consulta, "id" | "estado">
-    ) => {
-
-        setConsultas((prev) => [
-
-            {
-
-                id: Date.now().toString(),
-
-                estado: "Pendiente",
-
-                ...consulta,
-
-            },
-
-            ...prev,
-
-        ]);
-
-    };
-
+    
     const updateConsulta = (consulta: Consulta) => {
 
         setConsultas((prev) =>
