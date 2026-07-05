@@ -73,46 +73,35 @@ export function CrudProvider({ children }: { children: ReactNode }) {
 };
 
     
-    const updateConsulta = (consulta: Consulta) => {
+    const updateConsulta = async (consulta: Consulta) => {
+    const referencia = doc(db, "consultas", consulta.id);
+    await updateDoc(referencia, {
+        nombre: consulta.nombre,
+        apellido: consulta.apellido,
+        correo: consulta.correo,
+        telefono: consulta.telefono,
+        mensaje: consulta.mensaje,
+        fecha: consulta.fecha,
+        estado: consulta.estado,
+        precio: consulta.precio,
+    });
 
-        setConsultas((prev) =>
-            prev.map((c) => (c.id === consulta.id ? consulta : c))
-        );
+};
 
-    };
+    const deleteConsulta = async (id: string) => {
+    await deleteDoc(doc(db, "consultas", id));
+};
 
-    const deleteConsulta = (id: string) => {
-
-        setConsultas((prev) =>
-            prev.filter((consulta) => consulta.id !== id)
-        );
-
-    };
-
-    const cambiarEstado = (id: string) => {
-
-        setConsultas((prev) =>
-            prev.map((consulta) =>
-
-                consulta.id === id
-
-                    ? {
-
-                          ...consulta,
-
-                          estado:
-                              consulta.estado === "Pendiente"
-                                  ? "Terminado"
-                                  : "Pendiente",
-
-                      }
-
-                    : consulta
-
-            )
-        );
-
-    };
+    const cambiarEstado = async (id: string) => {
+    const consulta = consultas.find(c => c.id === id);
+    if (!consulta) return;
+    await updateDoc(doc(db, "consultas", id), {
+        estado:
+            consulta.estado === "Pendiente"
+                ? "Terminado"
+                : "Pendiente",
+    });
+};
 
     const getConsultaById = (id: string) => {
 
