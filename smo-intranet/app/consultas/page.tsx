@@ -26,6 +26,17 @@ export default function ConsultasPage() {
   const [message, setMessage] = useState("")
   const [messageType, setMessageType] = useState<"success" | "error" | null>(null)
 
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+      if (!user) {
+          router.replace("/login");
+      }
+  }, [user, router]);
+
+  if (!user) return null;
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target
     setForm((prev) => ({ ...prev, [name]: value }))

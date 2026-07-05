@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./trabajos.module.css";
 import { useCrud } from "@/app/context/CrudContext";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
+
+
 
 export default function TrabajosPage() {
     const {
@@ -11,6 +15,10 @@ export default function TrabajosPage() {
         cambiarEstado,
         updateConsulta,
     } = useCrud();
+
+const { user } = useAuth();
+const router = useRouter();
+
 
     const [editandoId, setEditandoId] = useState<string | null>(null);
 
@@ -24,6 +32,14 @@ export default function TrabajosPage() {
         precio: 0,
     });
     const [busqueda, setBusqueda] = useState("");
+
+    useEffect(() => {
+    if (!user) {
+        router.replace("/login");
+    }
+}, [user, router]);
+
+if (!user) return null;
 
     const pendientes = consultas.filter(
         (c) => c.estado === "Pendiente"

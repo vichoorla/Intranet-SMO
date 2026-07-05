@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import styles from "./Sidebar.module.css";
 
+
 export default function Sidebar() {
     const pathname = usePathname();
     const { user, logout } = useAuth();
-
+    
     // Si no hay sesión o estamos en el login, no mostrar el menú
     if (!user || pathname === "/login") {
         return null;
